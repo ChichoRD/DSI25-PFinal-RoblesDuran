@@ -23,6 +23,7 @@ public class PipBar : VisualElement
     private Color _activePipTint;
     private readonly List<Image> _pipsList = new List<Image>();
 
+    [UnityEngine.Scripting.Preserve]
     public new class UxmlFactory : UxmlFactory<PipBar, UxmlTraits> { }
     public new class UxmlTraits : VisualElement.UxmlTraits
     {
