@@ -123,15 +123,15 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: town
     originalName: 
-    pivot: {x: 0.5, y: -0.27272728}
+    pivot: {x: 0.4666667, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 12
-      height: 11
+      width: 15
+      height: 16
     spriteID: 43ac1a4dbacfec6498ae1a803c017105
     spriteBone: []
     spriteOutline: []
@@ -154,10 +154,10 @@ ScriptedImporter:
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 2
-        y: 3
-        width: 12
-        height: 11
+        x: 1
+        y: 0
+        width: 15
+        height: 16
       spriteId: 43ac1a4dbacfec6498ae1a803c017105
     linkedCells: []
     parentIndex: -1
