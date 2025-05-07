@@ -1,0 +1,41 @@
+.panel-vertical {
+}
+
+.panel-horizontal {
+    flex-direction: row;
+}
+
+.panel-wood {
+    background-image: url("project://database/Assets/sprites/fantasy/panels/wood_panel.png?fileID=21300000&guid=4b708c45fd18e664092f337e112e9d16&type=3#wood_panel");
+    -unity-slice-left: 4;
+    -unity-slice-top: 4;
+    -unity-slice-right: 4;
+    -unity-slice-bottom: 4;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-scale: 4px;
+}
+
+.panel-silver {
+    background-image: url("project://database/Assets/sprites/fantasy/panels/silver_panel.png?fileID=21300000&guid=36fe72337dc8d0f459982b25bdbf579c&type=3#silver_panel");
+    -unity-slice-left: 4;
+    -unity-slice-top: 4;
+    -unity-slice-right: 4;
+    -unity-slice-bottom: 4;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-scale: 4px;
+}
+
+.panel-gold {
+    background-image: url("project://database/Assets/sprites/fantasy/panels/gold_panel.png?fileID=21300000&guid=caa28970a96e72e46a950ba5b4b8908d&type=3#gold_panel");
+    -unity-slice-left: 4;
+    -unity-slice-top: 4;
+    -unity-slice-right: 4;
+    -unity-slice-bottom: 4;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-scale: 4px;
+}
+
+.panel-centering {
+    justify-content: space-around;
+    align-items: center;
+}

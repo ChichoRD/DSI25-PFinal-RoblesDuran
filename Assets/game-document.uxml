@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/game-document.uss?fileID=7433441132597879392&amp;guid=5115da1b39aaaa84fbcbd1aad7b4436a&amp;type=3#game-document" />
+    <ui:VisualElement name="background" class="panel-horizontal panel-silver" style="flex-grow: 1;">
+        <ui:VisualElement name="container-map" class="panel-centering" style="flex-grow: 1; width: 512px;">
+            <ui:VisualElement name="container-map-centering" style="flex-grow: 0; width: 90%; height: 90%;">
+                <ui:VisualElement name="map" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/map/map.png?fileID=21300000&amp;guid=945afe8dcff435a4b8b8aec873d4fce3&amp;type=3#map&quot;); -unity-slice-left: 4; -unity-slice-top: 4; -unity-slice-right: 4; -unity-slice-bottom: 4; -unity-slice-scale: 4px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="container-index" style="flex-grow: 1;">
+            <ui:VisualElement name="container-index-wood" class="panel-vertical panel-wood panel-centering" style="flex-grow: 1;">
+                <ui:VisualElement name="container-index-vertical" style="flex-grow: 0; width: 80%; height: 90%;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
