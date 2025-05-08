@@ -11,7 +11,7 @@ public class LocationInfo
 
     
     private readonly Label _userNotesLabel;
-    private readonly Image _userIcon;
+    private readonly VisualElement _userIcon;
 
 
     public LocationInfo(LocationInfoModel model, VisualElement root)
@@ -19,7 +19,7 @@ public class LocationInfo
         _model = model;
         _root = root;
         _userNotesLabel = root.Q<Label>("location-info-user-notes-label");
-        _userIcon = root.Q<Image>("location-info-user-icon");
+        _userIcon = root.Q<VisualElement>("location-info-user-icon");
 
         _model.UserNotesSet += OnUserNotesSet;
         _model.UserIconPathSet += OnUserIconPathSet;
@@ -37,7 +37,7 @@ public class LocationInfo
     {
         var image = Resources.Load<Texture2D>(arg);
         if (image != null) {
-            _userIcon.image = image;
+            _userIcon.style.backgroundImage = new StyleBackground(image);
             return true;
         } else {
             Debug.LogWarning($"error: user icon not found for path: {arg}");

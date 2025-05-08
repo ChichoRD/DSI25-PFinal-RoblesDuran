@@ -10,26 +10,22 @@ class LocationTab
 
 
     private readonly Label _nameLabel;
-    private readonly Image _userIconImage;
+    private readonly VisualElement _userIconImage;
 
     public LocationTab(LocationTabModel model, VisualElement root)
     {
         _model = model;
         _root = root;
         _nameLabel = root.Q<Label>("location-tab-name-label");
-        _userIconImage = root.Q<Image>("location-tab-user-icon-image");
+        _userIconImage = root.Q<VisualElement>("location-tab-user-icon-image");
 
         _model.NameSet += OnNameSet;
         _model.UserIconPathSet += OnUserIconPathSet;
         _model.LocationIndexSet += OnLocationIndexSet;
 
-        UpdateUI();
-    }
-
-    private void UpdateUI()
-    {
-        _nameLabel.text = _model.Name;
-        _userIconImage.image = Resources.Load<Texture2D>(_model.UserIconPath);
+        OnNameSet(_model.Name);
+        OnUserIconPathSet(_model.UserIconPath);
+        OnLocationIndexSet(_model.LocationIndex);
     }
     private bool OnNameSet(string name)
     {
@@ -41,7 +37,7 @@ class LocationTab
         Texture2D texture = Resources.Load<Texture2D>(userIconPath);
         if (texture != null)
         {
-            _userIconImage.image = texture;
+            _userIconImage.style.backgroundImage = new StyleBackground(texture);
             return true;
         }
         else

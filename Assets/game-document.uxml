@@ -9,8 +9,10 @@
                             <PipBar active-pip-image-path="live_active" inactive-pip-image-path="live_inactive" pips="3" active-pips="3" active-pip-tint="#FFFFFFFF" inactive-pip-tint="#B4B4B4B4" name="bar-live" style="flex-direction: row; flex-grow: 0; justify-content: space-around; width: 102px; height: 50%;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement style="flex-grow: 1; height: 80%; align-items: center; justify-content: space-around;">
-                        <AnnouncementMenu focusable="true" title="New king of aurlesdutch" announcement="yesterday" style="width: 512px; height: 256px;" />
+                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; height: 80%; align-items: center; justify-content: space-around;">
+                        <ui:VisualElement name="map-play-area" style="flex-grow: 1; align-items: center; justify-content: center; width: 90%;">
+                            <AnnouncementMenu focusable="true" title="New king of aurlesdutch" announcement="yesterday" style="width: 512px; height: 256px;" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-grow: 1; justify-content: space-around; align-items: center;">
                         <ui:VisualElement style="flex-grow: 1; width: 90%; bottom: 24px; flex-direction: row-reverse; align-items: center;">
@@ -23,7 +25,7 @@
         </ui:VisualElement>
         <ui:VisualElement name="container-index" style="flex-grow: 1;">
             <ui:VisualElement name="container-index-wood" class="panel-vertical panel-wood panel-centering" style="flex-grow: 1;">
-                <ui:VisualElement name="container-index-vertical" style="flex-grow: 0; width: 80%; height: 90%;" />
+                <ui:VisualElement name="location-tabs-container" style="flex-grow: 0; width: 80%; height: 90%;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

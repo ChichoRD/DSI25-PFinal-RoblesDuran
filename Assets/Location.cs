@@ -9,7 +9,7 @@ public class Location
     public VisualElement Root => _root;
 
 
-    private readonly Image _locationIcon;
+    private readonly VisualElement _locationIcon;
     private readonly Label _nameLabel;
     private readonly Label _descriptionLabel;
 
@@ -18,7 +18,7 @@ public class Location
     {
         _model = model;
         _root = root;
-        _locationIcon = root.Q<Image>("location-icon");
+        _locationIcon = root.Q<VisualElement>("location-icon");
         _nameLabel = root.Q<Label>("location-name-label");
         _descriptionLabel = root.Q<Label>("location-description-label");
 
@@ -44,7 +44,7 @@ public class Location
         };
 
         if (image != null) {
-            _locationIcon.image = image;
+            _locationIcon.style.backgroundImage = new StyleBackground(image);
         } else {
             Debug.LogWarning($"error: location icon not found for type: {data.type}");
         }

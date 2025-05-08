@@ -1,0 +1,41 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="location-container" style="flex-grow: 1; flex-direction: column-reverse;">
+        <ui:VisualElement name="location-icon" style="flex-grow: 0; width: 32px; height: 32px; background-image: url(&quot;project://database/Assets/sprites/custom/city.png?fileID=21300000&amp;guid=e2e9062b976d8b0429fe5c7554f84a75&amp;type=3#city&quot;);" />
+        <ui:VisualElement name="location-panel" style="flex-grow: 1; margin-left: 32px; justify-content: flex-end; flex-direction: row; padding-top: 50px;">
+            <ui:VisualElement name="location-panel-wood" style="flex-grow: 0; height: 160px; background-image: url(&quot;project://database/Assets/sprites/fantasy/panels/wood_panel.png?fileID=21300000&amp;guid=4b708c45fd18e664092f337e112e9d16&amp;type=3#wood_panel&quot;); -unity-slice-left: 4; -unity-slice-top: 4; -unity-slice-right: 4; -unity-slice-bottom: 4; justify-content: center; align-items: center; width: 65%;">
+                <ui:VisualElement name="VisualElement" style="flex-grow: 0; width: 90%; height: 80%;">
+                    <ui:VisualElement style="flex-grow: 1; flex-direction: row; height: 20%;">
+                        <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="location-name-label" style="-unity-font: url(&quot;project://database/Assets/fonts/darinia/Darinia.ttf?fileID=12800000&amp;guid=7d7fba940b89b644c9abd5a0e7d53be8&amp;type=3#Darinia&quot;); -unity-font-definition: initial;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1; flex-direction: row; height: 40%;">
+                        <ui:VisualElement style="flex-grow: 1; width: 70%;">
+                            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="location-description-label" style="color: rgb(46, 18, 8); -unity-font: url(&quot;project://database/Assets/fonts/darinia/Darinia.ttf?fileID=12800000&amp;guid=7d7fba940b89b644c9abd5a0e7d53be8&amp;type=3#Darinia&quot;); -unity-font-definition: initial; font-size: 8px; white-space: normal;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-grow: 1; width: 30%; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+                            <ui:VisualElement name="location-info-user-icon" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_anvil.png?fileID=2800000&amp;guid=f8f4593432b39144ebe480ad95a46646&amp;type=3#silver_anvil&quot;); -unity-background-scale-mode: scale-to-fit;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; height: 30%;">
+                        <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/panels/silver_panel.png?fileID=21300000&amp;guid=36fe72337dc8d0f459982b25bdbf579c&amp;type=3#silver_panel&quot;); -unity-slice-left: 4; -unity-slice-top: 4; -unity-slice-right: 4; -unity-slice-bottom: 4; padding-top: 6px; padding-right: 6px; padding-bottom: 6px; padding-left: 6px;">
+                            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="location-info-user-notes-label" style="color: rgb(159, 171, 184); -unity-font: url(&quot;project://database/Assets/fonts/darinia/Darinia.ttf?fileID=12800000&amp;guid=7d7fba940b89b644c9abd5a0e7d53be8&amp;type=3#Darinia&quot;); -unity-font-definition: initial; font-size: 8px; height: 90%; white-space: normal;" />
+                            <ui:TextField picking-mode="Ignore" multiline="true" value="filler text" name="location-info-user-notes-text-field" style="opacity: 1; height: 32px; font-size: 8px;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; align-items: center;">
+                <ui:VisualElement name="location-icon-selection-container" style="flex-grow: 0; height: 100px; width: 100px; background-image: url(&quot;project://database/Assets/sprites/fantasy/panels/gold_panel.png?fileID=21300000&amp;guid=caa28970a96e72e46a950ba5b4b8908d&amp;type=3#gold_panel&quot;); flex-wrap: wrap; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px; flex-direction: row; align-items: center; justify-content: space-around;">
+                    <ui:VisualElement name="anvil" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_anvil.png?fileID=2800000&amp;guid=f8f4593432b39144ebe480ad95a46646&amp;type=3#silver_anvil&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="bow" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_bow.png?fileID=2800000&amp;guid=5e07647aacadc17439f7a2de88cd21ce&amp;type=3#silver_bow&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="castle" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_castle.png?fileID=2800000&amp;guid=eac36bb5898d895479f28d20ba352f37&amp;type=3#silver_castle&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="feather" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_feather.png?fileID=2800000&amp;guid=bb8ec0bc0e633d14dbb3f72569048c7c&amp;type=3#silver_feather&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="flag" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_flag.png?fileID=2800000&amp;guid=a842d0d59cdd7a5478f6dc821616b850&amp;type=3#silver_flag&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="happy" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_happy_face.png?fileID=2800000&amp;guid=557732524b0806648bdac709d85950fb&amp;type=3#silver_happy_face&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="sad" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_sad_face.png?fileID=2800000&amp;guid=1c0cbb7d1b7f8bd47b84bfba18abdf66&amp;type=3#silver_sad_face&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="sword" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_sword.png?fileID=2800000&amp;guid=319ff2851fc99854ea7c55d287b58565&amp;type=3#silver_sword&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_star.png?fileID=2800000&amp;guid=e3c4dd2973e071c49866fedaec0c9a70&amp;type=3#silver_star&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
