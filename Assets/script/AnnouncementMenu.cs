@@ -11,6 +11,11 @@ public class AnnouncementMenu : VisualElement
     private Button _okButton;
     private Label _titleLabel;
     private Label _announcementLabel;
+    public string Title => _title;
+    public string Announcement => _announcement;
+    public Button OkButton => _okButton;
+    public Label TitleLabel => _titleLabel;
+    public Label AnnouncementLabel => _announcementLabel;
 
     [UnityEngine.Scripting.Preserve]
     public new class UxmlFactory : UxmlFactory<AnnouncementMenu, UxmlTraits> { }

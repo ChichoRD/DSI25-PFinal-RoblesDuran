@@ -21,6 +21,7 @@ public class LocationInfoModel
     }
 
     private LocationInfoData _locationInfo;
+    public LocationInfoData LocationInfo => _locationInfo;
     public Action<string> UserNotesSet;
     public Func<string, bool> UserIconPathSet;
     public Action<Vector2> PositionSet;

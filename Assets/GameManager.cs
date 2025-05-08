@@ -52,6 +52,32 @@ public class GameManager : MonoBehaviour
     }
     private DailyAnnouncement[] _dailyAnnouncements = Array.Empty<DailyAnnouncement>();
 
+    [Serializable]
+    public struct CustomLocationData
+    {
+        public LocationModel.LocationData locationData;
+        public LocationInfoModel.LocationInfoData locationInfoData;
+        public CustomLocationData(LocationModel.LocationData locationData, LocationInfoModel.LocationInfoData locationInfoData)
+        {
+            this.locationData = locationData;
+            this.locationInfoData = locationInfoData;
+        }
+    }
+
+    [Serializable]
+    public struct SerializedCustomLocations
+    {
+        public uint currentDay;
+        public uint travelPips;
+        public CustomLocationData[] locations;
+        public SerializedCustomLocations(uint currentDay, uint travelPips, CustomLocationData[] locations)
+        {
+            this.currentDay = currentDay;
+            this.travelPips = travelPips;
+            this.locations = locations;
+        }
+    }
+
     void Awake()
     {
         _locationTabsController = GetComponent<LocationTabsController>();
@@ -123,10 +149,49 @@ public class GameManager : MonoBehaviour
 
         _locationTemplate = Resources.Load<VisualTreeAsset>("template/location");
         _announcementMenu = root.Q<AnnouncementMenu>("announcement-menu");
+
         
         _mapPlayArea.RegisterCallback<PointerDownEvent>(MapPlayAreaOnPointerDown);
         _passDayButton.clicked += OnPassDayButtonClicked;
-        DayStart();
+        if (TryLoadSavedGame()) {
+            Debug.Log("Loaded saved game");
+        } else {
+            Debug.Log("No saved game found, starting new game");
+        }
+
+        uint remainingLocations = DayStart();
+        if (remainingLocations == 0) 
+        {
+            OnFinalDayStart();
+        }
+    }
+
+    private static string GetSaveFilePath()
+    {
+        return $"{Application.persistentDataPath}/save.json";
+    }
+    private static void SaveGame(SerializedCustomLocations customLocations)
+    {
+        string json = JsonUtility.ToJson(customLocations, true);
+        System.IO.File.WriteAllText(GetSaveFilePath(), json);
+    }
+    private bool TryLoadSavedGame()
+    {
+        string filePath = GetSaveFilePath();
+        if (System.IO.File.Exists(filePath))
+        {
+            string json = System.IO.File.ReadAllText(filePath);
+            var customLocations = JsonUtility.FromJson<SerializedCustomLocations>(json);
+            _currentDay = customLocations.currentDay;
+            _travelBar.ActivePips = customLocations.travelPips;
+            foreach (var locationData in customLocations.locations)
+            {
+                AddLocation(locationData.locationData, locationData.locationInfoData);
+            }
+            Debug.Log($"Loaded ${customLocations.locations.Length} locations from save file");
+            return true;
+        }
+        return false;
     }
 
     private void OnPassDayButtonClicked()
@@ -162,51 +227,25 @@ public class GameManager : MonoBehaviour
         throw new NotImplementedException();
     }
 
-    private void MapPlayAreaOnPointerDown(PointerDownEvent evt)
-    {   
-        if (_travelBar.ActivePips == 0) {
-            Debug.LogWarning("error: no travel pips available");
-            return;
-        }
-        else if (_locations.Count >= _locationsData.Length)
-        {
-            Debug.LogWarning("error: maximum number of locations reached");
-            return;
-        }
-
+    private LocationBundle AddLocation(LocationModel.LocationData locationData, LocationInfoModel.LocationInfoData locationInfoData)
+    {
         // create a new location model
-        LocationModel locationModel = new LocationModel(_locationsData[
-            _locations.Count
-        ]);
+        LocationModel locationModel = new LocationModel(locationData);
 
         // add a new location at the clicked position
         // create a new root element for the location
         VisualElement locationRoot = _locationTemplate.CloneTree();
         locationRoot.style.position = Position.Absolute;
-        float position_x = evt.localPosition.x - _locationIconOffset.x;
-        float position_y = evt.localPosition.y - _locationIconOffset.y;
-
-        locationRoot.style.left = position_x;
-        locationRoot.style.top = position_y;
+        locationRoot.style.left = locationInfoData.position_x;
+        locationRoot.style.top = locationInfoData.position_y;
         _mapPlayArea.Add(locationRoot);
 
-        string[] userIconPaths = {
-            "location/silver_anvil",
-            "location/silver_happy",
-            "location/silver_sad",
-            "location/silver_bow",
-            "location/silver_sword",
-            "location/silver_star",
-            "location/silver_flag",
-            "location/silver_feather",
-            "location/silver_castle"
-        };
         Location location = new Location(locationModel, locationRoot);
         LocationInfo locationInfo = new LocationInfo(new LocationInfoModel(new LocationInfoModel.LocationInfoData{
-            position_x = position_x,
-            position_y = position_y,
-            userIconPath = userIconPaths[UnityEngine.Random.Range(0, userIconPaths.Length)],
-            userNotes = "Click to edit notes"
+            position_x = locationInfoData.position_x,
+            position_y = locationInfoData.position_y,
+            userIconPath = locationInfoData.userIconPath,
+            userNotes = locationInfoData.userNotes
         }), locationRoot);
         LocationBundle locationBundle = new LocationBundle(location, locationInfo);
 
@@ -245,8 +284,44 @@ public class GameManager : MonoBehaviour
             });
         }
 
-        --_travelBar.ActivePips;
         _locations.Add(locationBundle);
+        return locationBundle;
+    }
+
+    private void MapPlayAreaOnPointerDown(PointerDownEvent evt)
+    {   
+        if (_travelBar.ActivePips == 0) {
+            Debug.LogWarning("error: no travel pips available");
+            return;
+        }
+        else if (_locations.Count >= _locationsData.Length)
+        {
+            Debug.LogWarning("error: maximum number of locations reached");
+            return;
+        }
+
+        string[] userIconPaths = {
+            "location/silver_anvil",
+            "location/silver_happy",
+            "location/silver_sad",
+            "location/silver_bow",
+            "location/silver_sword",
+            "location/silver_star",
+            "location/silver_flag",
+            "location/silver_feather",
+            "location/silver_castle"
+        };
+        string userIconPath = userIconPaths[UnityEngine.Random.Range(0, userIconPaths.Length)];
+        LocationModel.LocationData locationData = _locationsData[_locations.Count];
+        LocationInfoModel.LocationInfoData locationInfoData = new LocationInfoModel.LocationInfoData
+        {
+            position_x = evt.localPosition.x - _locationIconOffset.x,
+            position_y = evt.localPosition.y - _locationIconOffset.y,
+            userIconPath = userIconPath,
+            userNotes = "Click to edit notes"
+        };
+        LocationBundle locationBundle = AddLocation(locationData, locationInfoData);
+        --_travelBar.ActivePips;
     }
 
     private void OnLocationTabSelected(PointerDownEvent evt, LocationTab tab)
@@ -259,5 +334,23 @@ public class GameManager : MonoBehaviour
         _selectedLocationTab = tab;
         tab.Root.AddToClassList("location-tab-selected");
         _locations[(int)_selectedLocationTab.Model.LocationIndex].ShowLocationPanel();
+    }
+
+    void OnDestroy()
+    {
+        SerializedCustomLocations customLocations = new SerializedCustomLocations(
+            _currentDay,
+            _travelBar.ActivePips,
+            new CustomLocationData[_locations.Count]
+        );
+        for (int i = 0; i < _locations.Count; i++)
+        {
+            var location = _locations[i];
+            customLocations.locations[i] = new CustomLocationData(
+                location.Location.Model.Location,
+                location.LocationInfo.Model.LocationInfo
+            );
+        }
+        SaveGame(customLocations);
     }
 }
