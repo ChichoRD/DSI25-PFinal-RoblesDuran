@@ -307,9 +307,9 @@ public class GameManager : MonoBehaviour
             _locations[(int)CurrentLocationIndex].Location.Root.RemoveFromHierarchy();
             _locations.RemoveAt((int)CurrentLocationIndex);
             // shuffle the remaining locations
-            for (int i = _locations.Count - 1; i < _locationsData.Length; i++)
+            for (int i = _locations.Count; i < _locationsData.Length; i++)
             {
-                int randomIndex = UnityEngine.Random.Range(i, _locations.Count);
+                int randomIndex = UnityEngine.Random.Range(i, _locationsData.Length);
                 (_locationsData[randomIndex], _locationsData[i]) =
                     (_locationsData[i], _locationsData[randomIndex]);
             }
