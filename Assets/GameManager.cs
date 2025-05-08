@@ -16,7 +16,25 @@ public class GameManager : MonoBehaviour
     private LocationTab _selectedLocationTab = null;
     private PipBar _travelBar;
     private Button _passDayButton;
+    private Button _travelButton;
     private uint _currentDay = 0;
+    private PipBar _liveBar;
+    private Label _currentLocationLabel;
+    private uint _currentLocationIndex;
+    public uint CurrentLocationIndex {
+        get => _currentLocationIndex;
+        private set
+        {
+            _currentLocationIndex = value;
+            _currentLocationLabel.text = $"You are in: {CurrentLocation.Location.Model.Location.name}";
+        }
+    }
+    public LocationBundle CurrentLocation {
+        get {
+            Debug.Assert(_currentLocationIndex < _locations.Count, "error: current location index out of bounds");
+            return _locations[(int)_currentLocationIndex];
+        }
+    }
 
     [Serializable]
     public struct SerializedLocations
@@ -69,13 +87,9 @@ public class GameManager : MonoBehaviour
     {
         public uint currentDay;
         public uint travelPips;
+        public uint livePips;
+        public uint currentLocationIndex;
         public CustomLocationData[] locations;
-        public SerializedCustomLocations(uint currentDay, uint travelPips, CustomLocationData[] locations)
-        {
-            this.currentDay = currentDay;
-            this.travelPips = travelPips;
-            this.locations = locations;
-        }
     }
 
     void Awake()
@@ -146,6 +160,9 @@ public class GameManager : MonoBehaviour
         _locationTabsRoot = root.Q("location-tabs-container");
         _travelBar = root.Q<PipBar>("bar-travel");
         _passDayButton = root.Q<Button>("button-sleep");
+        _travelButton = root.Q<Button>("button-travel");
+        _liveBar = root.Q<PipBar>("bar-live");
+        _currentLocationLabel = root.Q<Label>("location-current-label");
 
         _locationTemplate = Resources.Load<VisualTreeAsset>("template/location");
         _announcementMenu = root.Q<AnnouncementMenu>("announcement-menu");
@@ -153,6 +170,7 @@ public class GameManager : MonoBehaviour
         
         _mapPlayArea.RegisterCallback<PointerDownEvent>(MapPlayAreaOnPointerDown);
         _passDayButton.clicked += OnPassDayButtonClicked;
+        _travelButton.clicked += OnTravelButtonClicked;
         if (TryLoadSavedGame()) {
             Debug.Log("Loaded saved game");
         } else {
@@ -164,6 +182,30 @@ public class GameManager : MonoBehaviour
         {
             OnFinalDayStart();
         }
+    }
+
+    private void OnTravelButtonClicked()
+    {
+        const uint travelCost = 2;
+        if (_travelBar.ActivePips < travelCost) {
+            Debug.LogWarning("error: not enough travel pips to travel");
+            return;
+        }
+        if (_locations.Count == 0) {
+            Debug.LogWarning("error: no locations to travel to");
+            return;
+        }
+        if (_selectedLocationTab == null) {
+            Debug.LogWarning("error: no location tab selected");
+            return;
+        }
+        if (_selectedLocationTab.Model.LocationIndex == _currentLocationIndex) {
+            Debug.LogWarning("error: already at selected location");
+            return;
+        }
+
+        _travelBar.ActivePips -= travelCost;
+        CurrentLocationIndex = _selectedLocationTab.Model.LocationIndex;
     }
 
     private static string GetSaveFilePath()
@@ -182,12 +224,14 @@ public class GameManager : MonoBehaviour
         {
             string json = System.IO.File.ReadAllText(filePath);
             var customLocations = JsonUtility.FromJson<SerializedCustomLocations>(json);
-            _currentDay = customLocations.currentDay;
-            _travelBar.ActivePips = customLocations.travelPips;
             foreach (var locationData in customLocations.locations)
             {
                 AddLocation(locationData.locationData, locationData.locationInfoData);
             }
+            _currentDay = customLocations.currentDay;
+            _liveBar.ActivePips = customLocations.livePips;
+            _travelBar.ActivePips = customLocations.travelPips;
+            CurrentLocationIndex = customLocations.currentLocationIndex;
             Debug.Log($"Loaded ${customLocations.locations.Length} locations from save file");
             return true;
         }
@@ -196,6 +240,9 @@ public class GameManager : MonoBehaviour
 
     private void OnPassDayButtonClicked()
     {
+        if (_locations.Count > 0) {
+            PassDayInLocation(CurrentLocation);
+        }
         ++_currentDay;
 
         uint remainingLocations = DayStart();
@@ -205,11 +252,55 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void PassDayInLocation(LocationBundle currentLocation)
+    {
+        switch (currentLocation.Location.Model.Location.type)
+        {
+        case LocationModel.LocationType.None:
+            Debug.Assert(false, "error: location type is None");
+            break;
+        case LocationModel.LocationType.Village:
+            uint newHealth = (uint)Mathf.Min((int)_liveBar.ActivePips + 1, (int)_liveBar.Pips);
+            uint newTravel = (uint)Mathf.Min((int)_travelBar.ActivePips + 1, (int)_travelBar.Pips);
+            _liveBar.ActivePips = newHealth;
+            _travelBar.ActivePips = newTravel;
+            break;
+        case LocationModel.LocationType.Town:
+            newTravel = (uint)Mathf.Min((int)_travelBar.ActivePips + 2, (int)_travelBar.Pips);
+            _travelBar.ActivePips = newTravel;
+            break;
+        case LocationModel.LocationType.City: {}
+            float pillaged = UnityEngine.Random.Range(0.0f, 1.0f);
+            const float pillageProbability = 0.15f;
+            if (pillaged < pillageProbability) {
+                _liveBar.ActivePips = (uint)Mathf.Max((int)_liveBar.ActivePips - 1, 0);
+            } else {
+                _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.ActivePips + 3, (int)_travelBar.Pips);
+            }
+            break;
+        case LocationModel.LocationType.Mountain:
+            _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.ActivePips + 1, (int)_travelBar.Pips);
+            break;
+        case LocationModel.LocationType.BanditStash:
+            _liveBar.ActivePips = (uint)Mathf.Max((int)_liveBar.ActivePips - 1, 0);
+            _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.ActivePips + 1, (int)_travelBar.Pips);
+            break;
+        case LocationModel.LocationType.TreasureMountain:
+            ++_liveBar.Pips;
+            ++_travelBar.Pips;
+            _liveBar.ActivePips = (uint)Mathf.Min((int)_liveBar.ActivePips + 1, (int)_liveBar.Pips);
+            _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.ActivePips + 1, (int)_travelBar.Pips);
+            break;
+        default:
+            Debug.Assert(false, "error: unknown location type");
+            break;
+        }
+    }
+
     private uint DayStart()
     {
         int remainingLocations = _locationsData.Length - _locations.Count;
         Debug.Assert(remainingLocations >= 0, "error: remaining locations should be non-negative");
-        _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.Pips, remainingLocations);
 
         var annnouncement = _dailyAnnouncements[_currentDay % _dailyAnnouncements.Length];
         _announcementMenu.SetAnnouncement(
@@ -329,6 +420,7 @@ public class GameManager : MonoBehaviour
             userNotes = "Click to edit notes"
         };
         LocationBundle locationBundle = AddLocation(locationData, locationInfoData);
+        CurrentLocationIndex = (uint)_locations.Count - 1;
         --_travelBar.ActivePips;
     }
 
@@ -348,11 +440,13 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
-        SerializedCustomLocations customLocations = new SerializedCustomLocations(
-            _currentDay,
-            _travelBar.ActivePips,
-            new CustomLocationData[_locations.Count]
-        );
+        SerializedCustomLocations customLocations = new SerializedCustomLocations{
+            currentDay = _currentDay,
+            travelPips = _travelBar.ActivePips,
+            livePips = _liveBar.ActivePips,
+            currentLocationIndex = _currentLocationIndex,
+            locations = new CustomLocationData[_locations.Count]
+        };
         for (int i = 0; i < _locations.Count; i++)
         {
             var location = _locations[i];
