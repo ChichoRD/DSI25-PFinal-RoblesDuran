@@ -1,0 +1,53 @@
+{
+    "announcements": [
+        {
+            "title": "Welcome to the Kingdom!",
+            "description": "We are excited to have you here. Explore this mountainous kingdom and discover new locations!\nSimply click on the map to start your adventure."
+        },
+        {
+            "title": "Duque of Aurlesfritch travels east in seek of a treasure",
+            "description": "The Duque of Aurlesfritch has announced that he will be travelling east in search of a treasure. He is looking for brave adventurers to join him on this quest. If you are interested, please visit the city of Aurlesfritch. \n\nRumor has it that the treasure is hidden in a secret mountainous location, and only those who are worthy will be able to find it. Are you up for the challenge?"
+        },
+        {
+            "title": "Bandits spotted near farmer villages",
+            "description": "Reports have come in that bandits have been spotted near the farmer villages. The local authorities are urging all citizens to stay indoors and report any suspicious activity.\n\nIf you see anything unusual, please contact the Royal Guard immediately. Your safety is our top priority."
+        },
+        {
+            "title": "Upheaval in the cities due to the final decision to name the Kingdom",
+            "description": "Our Kingdom has been unnamed for over three years now after the last King passed away. The Royal Guard has finally made a decision to name the Kingdom after the late King Eigno.\n\nThe citizens are divided on this decision, with some supporting it and others opposing it. The Royal Guard is urging everyone to remain calm and respect the decision."
+        },
+        {
+            "title": "The Royal Guard is recruiting new members",
+            "description": "The Royal Guard is looking for brave and skilled individuals to join their ranks. If you are interested in serving your Kingdom and protecting its citizens, please visit the Royal Guard headquarters in the city of Aurlesfritch.\n\nThis is a great opportunity to serve your Kingdom and make a difference in the lives of its citizens."
+        },
+        {
+            "title": "New trade routes opened",
+            "description": "The Royal Guard has announced that new trade routes have been opened between the cities of Aurlesfritch and Eigno. This will allow for easier transportation of goods and services between the two cities.\n\nCitizens are encouraged to take advantage of this new opportunity and explore the new trade routes."
+        },
+        {
+            "title": "Acclaimed monk passes away",
+            "description": "Jud I, the acclaimed monk, has passed away at the age of 102. He was known for his wisdom and kindness, and his passing has left a void in the hearts of many.\n\nThe Royal Guard is urging citizens to pay their respects and honor his memory. A memorial service will be held in the city of Aurlesfritch next week."
+        },
+        {
+            "title": "New festival in the city of Aurlesfritch",
+            "description": "The city of Aurlesfritch is hosting a new festival to celebrate the Kingdom's rich culture and history. The festival will feature food, music, and entertainment from all over the Kingdom.\n\nCitizens are encouraged to attend and enjoy the festivities. This is a great opportunity to come together as a community and celebrate our Kingdom."
+        },
+        {
+            "title": "Royal Guard announces new training program",
+            "description": "The Royal Guard has announced a new training program for aspiring guards. This program will provide individuals with the skills and knowledge needed to serve in the Royal Guard.\n\nIf you are interested in joining the Royal Guard, please visit their headquarters in the city of Aurlesfritch for more information."
+        }
+        ,
+        {
+            "title": "New laws passed in the Kingdom",
+            "description": "The Royal Guard has passed new laws to improve the safety and security of the Kingdom. These laws include stricter penalties for banditry and theft, as well as increased funding for the Royal Guard.\n\nCitizens are encouraged to familiarize themselves with these new laws and report any violations to the Royal Guard."
+        },
+        {
+            "title": "Royal Guard announces new patrol routes",
+            "description": "The Royal Guard has announced new patrol routes to increase security in the Kingdom. These patrols will cover all major cities and towns, ensuring that citizens feel safe and secure.\n\nIf you see a member of the Royal Guard on patrol, please thank them for their service."
+        },
+        {
+            "title": "Insights into the bandit groups' movements",
+            "description": "The Royal Guard has released new information about the movements of the bandit groups in the Kingdom. They are believed to be planning a large-scale attack on one of the major cities.\n\nCitizens are urged to remain vigilant and report any suspicious activity to the Royal Guard. Your safety is our top priority."
+        }
+    ]
+}

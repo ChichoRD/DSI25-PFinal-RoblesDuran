@@ -33,7 +33,7 @@
                     <ui:VisualElement name="happy" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_happy_face.png?fileID=2800000&amp;guid=557732524b0806648bdac709d85950fb&amp;type=3#silver_happy_face&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
                     <ui:VisualElement name="sad" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_sad_face.png?fileID=2800000&amp;guid=1c0cbb7d1b7f8bd47b84bfba18abdf66&amp;type=3#silver_sad_face&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
                     <ui:VisualElement name="sword" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_sword.png?fileID=2800000&amp;guid=319ff2851fc99854ea7c55d287b58565&amp;type=3#silver_sword&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
-                    <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_star.png?fileID=2800000&amp;guid=e3c4dd2973e071c49866fedaec0c9a70&amp;type=3#silver_star&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
+                    <ui:VisualElement name="star" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/sprites/fantasy/icons/silver_star.png?fileID=2800000&amp;guid=e3c4dd2973e071c49866fedaec0c9a70&amp;type=3#silver_star&quot;); height: 24px; -unity-background-scale-mode: scale-to-fit; width: 24px;" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

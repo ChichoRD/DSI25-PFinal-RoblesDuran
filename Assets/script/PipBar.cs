@@ -116,6 +116,35 @@ public class PipBar : VisualElement
         }
     }
 
+    public uint ActivePips
+    {
+        get => _activePips;
+        set
+        {
+            if (value > _pips)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "Active pips cannot exceed total pips.");
+            } else {
+                _activePips = value;
+                UpdatePipBar();
+            }
+        }
+    }
+    public uint Pips
+    {
+        get => _pips;
+        set
+        {
+            if (value < _activePips)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "Total pips cannot be less than active pips.");
+            } else {
+                _pips = value;
+                UpdatePipBar();
+            }
+        }
+    }
+
     public PipBar()
     {
         _inactivePipTint = Color.gray;

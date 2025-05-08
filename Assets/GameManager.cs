@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -14,6 +13,10 @@ public class GameManager : MonoBehaviour
     private VisualElement _locationTabsRoot;    
     private LocationTabsController _locationTabsController;
     private readonly List<LocationBundle> _locations = new List<LocationBundle>();
+    private LocationTab _selectedLocationTab = null;
+    private PipBar _travelBar;
+    private Button _passDayButton;
+    private uint _currentDay = 0;
 
     [Serializable]
     public struct SerializedLocations
@@ -27,6 +30,28 @@ public class GameManager : MonoBehaviour
     }
     private LocationModel.LocationData[] _locationsData = Array.Empty<LocationModel.LocationData>();
 
+    [Serializable]
+    public struct DailyAnnouncement
+    {
+        public string title;
+        public string description;
+        public DailyAnnouncement(string title, string description)
+        {
+            this.title = title;
+            this.description = description;
+        }
+    }
+    [Serializable]
+    public struct SerializedAnnouncements
+    {
+        public DailyAnnouncement[] announcements;
+        public SerializedAnnouncements(DailyAnnouncement[] announcements)
+        {
+            this.announcements = announcements;
+        }
+    }
+    private DailyAnnouncement[] _dailyAnnouncements = Array.Empty<DailyAnnouncement>();
+
     void Awake()
     {
         _locationTabsController = GetComponent<LocationTabsController>();
@@ -35,6 +60,25 @@ public class GameManager : MonoBehaviour
         {
             SerializedLocations serializedLocations = JsonUtility.FromJson<SerializedLocations>(jsonLocations.text);
             _locationsData = serializedLocations.locations;
+            
+            const int mountainRepeatCount = 6;
+            LocationModel.LocationData[] modifiedLocations = new LocationModel.LocationData[_locationsData.Length + mountainRepeatCount];
+            LocationModel.LocationData mountainData = default;
+            for (int i = 0; i < _locationsData.Length; i++)
+            {
+                var data = _locationsData[i];
+                if (data.type == LocationModel.LocationType.Mountain)
+                {
+                    mountainData = data;
+                }
+                modifiedLocations[i] = data;
+            }
+            for (int i = 0; i < mountainRepeatCount; i++)
+            {
+                modifiedLocations[_locationsData.Length + i] = mountainData;
+            }
+            _locationsData = modifiedLocations;
+
             // shuffle the locations
             for (int i = 0; i < _locationsData.Length; i++)
             {
@@ -48,6 +92,24 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("error: locations.json not found in Resources folder");
         }
+
+        TextAsset jsonAnnouncements = Resources.Load<TextAsset>("announcements");
+        if (jsonAnnouncements != null)
+        {
+            SerializedAnnouncements serializedAnnouncements = JsonUtility.FromJson<SerializedAnnouncements>(jsonAnnouncements.text);
+            _dailyAnnouncements = serializedAnnouncements.announcements;
+            for (int i = 1; i < _dailyAnnouncements.Length; i++)
+            {
+                int randomIndex = UnityEngine.Random.Range(i, _dailyAnnouncements.Length);
+                (_dailyAnnouncements[randomIndex], _dailyAnnouncements[i]) =
+                    (_dailyAnnouncements[i], _dailyAnnouncements[randomIndex]);
+            }
+            Debug.Log($"Loaded {_dailyAnnouncements.Length} announcements from {jsonAnnouncements.name}");
+        }
+        else
+        {
+            Debug.LogError("error: announcements.json not found in Resources folder");
+        }
     }
 
     void Start()
@@ -56,18 +118,57 @@ public class GameManager : MonoBehaviour
         VisualElement root = uIDocument.rootVisualElement;
         _mapPlayArea = root.Q("map-play-area");
         _locationTabsRoot = root.Q("location-tabs-container");
+        _travelBar = root.Q<PipBar>("bar-travel");
+        _passDayButton = root.Q<Button>("button-sleep");
 
         _locationTemplate = Resources.Load<VisualTreeAsset>("template/location");
-        _announcementMenu = new AnnouncementMenu();
-        _mapPlayArea.Add(_announcementMenu);
-        _announcementMenu.Hide();
+        _announcementMenu = root.Q<AnnouncementMenu>("announcement-menu");
         
         _mapPlayArea.RegisterCallback<PointerDownEvent>(MapPlayAreaOnPointerDown);
+        _passDayButton.clicked += OnPassDayButtonClicked;
+        DayStart();
+    }
+
+    private void OnPassDayButtonClicked()
+    {
+        ++_currentDay;
+
+        uint remainingLocations = DayStart();
+        if (remainingLocations == 0) 
+        {
+            OnFinalDayStart();
+        }
+    }
+
+    private uint DayStart()
+    {
+        int remainingLocations = _locationsData.Length - _locations.Count;
+        Debug.Assert(remainingLocations >= 0, "error: remaining locations should be non-negative");
+        _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.Pips, remainingLocations);
+
+        var annnouncement = _dailyAnnouncements[_currentDay % _dailyAnnouncements.Length];
+        _announcementMenu.SetAnnouncement(
+            annnouncement.title,
+            annnouncement.description
+        );
+        _announcementMenu.BringToFront();
+        _announcementMenu.Show();
+
+        return (uint)remainingLocations;
+    }
+
+    private void OnFinalDayStart()
+    {
+        throw new NotImplementedException();
     }
 
     private void MapPlayAreaOnPointerDown(PointerDownEvent evt)
-    {
-        if (_locations.Count >= _locationsData.Length)
+    {   
+        if (_travelBar.ActivePips == 0) {
+            Debug.LogWarning("error: no travel pips available");
+            return;
+        }
+        else if (_locations.Count >= _locationsData.Length)
         {
             Debug.LogWarning("error: maximum number of locations reached");
             return;
@@ -115,15 +216,48 @@ public class GameManager : MonoBehaviour
             locationBundle.ShowLocationPanel();
         });
         locationBundle.Location.LocationIcon.RegisterCallback<PointerLeaveEvent>(evt => {
+            locationBundle.HideLocationNotesInput();
+            locationBundle.HideLocationUserSelectionPanel();
             locationBundle.HideLocationPanel();
         });
+        locationBundle.HideLocationPanel();
+        locationBundle.LocationInfo.UserIcon.AddToClassList("clickable-border");
+        locationBundle.LocationInfo.UserNotesLabel.AddToClassList("clickable-border");
+        foreach (var icon in locationBundle.LocationUserIcons)
+        {
+            icon.AddToClassList("clickable-border");
+        }
 
-        _locationTabsController.AddLocationTab(new LocationTabModel.LocationTabData{
-            name = location.Model.Location.name,
-            locationIndex = (uint)_locations.Count,
-            userIconPath = locationInfo.Model.UserIconPath
-        }, _locationTabsRoot);
+        if (location.Model.Location.type != LocationModel.LocationType.Mountain) {
+            LocationTab tab = _locationTabsController.AddLocationTab(new LocationTabModel.LocationTabData{
+                name = location.Model.Location.name,
+                locationIndex = (uint)_locations.Count,
+                userIconPath = locationInfo.Model.UserIconPath
+            }, _locationTabsRoot);
+            locationBundle.UserIconPathSet += iconPath =>
+            {
+                tab.Model.UserIconPath = iconPath;
+            };
+            tab.Root.AddToClassList("location-tab");
+            tab.Root.RegisterCallback<PointerDownEvent>(evt =>
+            {
+                OnLocationTabSelected(evt, tab);
+            });
+        }
 
+        --_travelBar.ActivePips;
         _locations.Add(locationBundle);
+    }
+
+    private void OnLocationTabSelected(PointerDownEvent evt, LocationTab tab)
+    {
+        if (_selectedLocationTab != null)
+        {
+            _selectedLocationTab.Root.RemoveFromClassList("location-tab-selected");
+            _locations[(int)_selectedLocationTab.Model.LocationIndex].HideLocationPanel();
+        }
+        _selectedLocationTab = tab;
+        tab.Root.AddToClassList("location-tab-selected");
+        _locations[(int)_selectedLocationTab.Model.LocationIndex].ShowLocationPanel();
     }
 }
