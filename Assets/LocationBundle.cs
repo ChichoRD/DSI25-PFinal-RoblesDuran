@@ -29,12 +29,18 @@ public class LocationBundle
 
         _locationNotesLabel.RegisterCallback<PointerDownEvent>(OnLocationNotesLabelPointerDown);
         _locationNotesInput.RegisterValueChangedCallback(OnLocationNotesInputValueChanged);
+        _locationNotesInput.RegisterCallback<BlurEvent>(OnLocationNotesInputValueChanged);
         locationInfo.UserIcon.RegisterCallback<PointerDownEvent>(OnLocationUserIconPointerDown);
         foreach (var icon in _locationUserSelectionPanel.Children())
         {
             _locationUserIcons.Add(icon);
             icon.RegisterCallback<ClickEvent>(OnUserIconSelected);
         }
+    }
+
+    private void OnLocationNotesInputValueChanged(BlurEvent evt)
+    {
+        HideLocationNotesInput();
     }
 
     private void OnLocationUserIconPointerDown(PointerDownEvent evt)

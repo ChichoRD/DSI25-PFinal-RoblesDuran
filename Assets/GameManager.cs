@@ -179,6 +179,19 @@ public class GameManager : MonoBehaviour
         _currentLocationLabel = root.Q<Label>("location-current-label");
         _currentDayLabel = root.Q<Label>("current-day-label");
 
+        VisualElement containerMap = root.Q("container-map");
+        VisualElement containerIndex = root.Q("container-index");
+        _mapPlayArea.RegisterCallback<PointerEnterEvent>(evt => {
+            containerMap.parent.style.flexDirection = FlexDirection.RowReverse;
+            containerMap.BringToFront();
+            containerIndex.SendToBack();
+        });
+        _mapPlayArea.RegisterCallback<PointerLeaveEvent>(evt => {
+            containerMap.parent.style.flexDirection = FlexDirection.Row;
+            containerIndex.BringToFront();
+            containerMap.SendToBack();
+        });
+
         _locationTemplate = Resources.Load<VisualTreeAsset>("template/location");
         _announcementMenu = root.Q<AnnouncementMenu>("announcement-menu");
 
@@ -277,7 +290,7 @@ public class GameManager : MonoBehaviour
             break;
         case LocationModel.LocationType.City: {}
             float pillaged = UnityEngine.Random.Range(0.0f, 1.0f);
-            const float pillageProbability = 0.15f;
+            const float pillageProbability = 0.25f;
             if (pillaged < pillageProbability) {
                 _liveBar.ActivePips = (uint)Mathf.Max((int)_liveBar.ActivePips - 1, 0);
             } else {
@@ -333,7 +346,7 @@ public class GameManager : MonoBehaviour
         } else if (remainingLocations == 0) {
             annnouncement = new DailyAnnouncement("All Locations Found. Congratulations!", "You have found all locations and treasures. You are a true explorer!");
             _announcementMenu.OkButton.clicked += RestartGame;
-        } else if (CurrentDay >= 7 && CurrentDay < 14) {
+        } else if (CurrentDay == 7) {
             annnouncement = new DailyAnnouncement("New Locations Available", $"You have {remainingLocations} locations left to find.");
         } else if (CurrentDay >= 14) {
             annnouncement = new DailyAnnouncement("Game Over", "You spent too long in your exploration mission and the Duque of Aurlesfritch already found the treasure of these lands.");
@@ -401,8 +414,6 @@ public class GameManager : MonoBehaviour
             locationBundle.ShowLocationPanel();
         });
         locationBundle.Location.LocationIcon.RegisterCallback<PointerLeaveEvent>(evt => {
-            locationBundle.HideLocationNotesInput();
-            locationBundle.HideLocationUserSelectionPanel();
             locationBundle.HideLocationPanel();
         });
         locationBundle.HideLocationPanel();
@@ -484,7 +495,8 @@ public class GameManager : MonoBehaviour
         if (_selectedLocationTab != null)
         {
             _selectedLocationTab.Root.RemoveFromClassList("location-tab-selected");
-            _locations[(int)_selectedLocationTab.Model.LocationIndex].HideLocationPanel();
+            LocationBundle previousLocationBundle = _locations[(int)_selectedLocationTab.Model.LocationIndex];
+            previousLocationBundle.HideLocationPanel();
         }
         _selectedLocationTab = tab;
         tab.Root.AddToClassList("location-tab-selected");
