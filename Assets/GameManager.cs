@@ -299,6 +299,14 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("error: maximum number of locations reached");
             return;
         }
+        float position_x = evt.localPosition.x - _locationIconOffset.x;
+        float position_y = evt.localPosition.y - _locationIconOffset.y;
+        if (position_x < 0 || position_x > _mapPlayArea.resolvedStyle.width ||
+            position_y < 0 || position_y > _mapPlayArea.resolvedStyle.height)
+        {
+            Debug.LogWarning("error: clicked position is outside of map play area");
+            return;
+        }
 
         string[] userIconPaths = {
             "location/silver_anvil",
@@ -315,8 +323,8 @@ public class GameManager : MonoBehaviour
         LocationModel.LocationData locationData = _locationsData[_locations.Count];
         LocationInfoModel.LocationInfoData locationInfoData = new LocationInfoModel.LocationInfoData
         {
-            position_x = evt.localPosition.x - _locationIconOffset.x,
-            position_y = evt.localPosition.y - _locationIconOffset.y,
+            position_x = position_x,
+            position_y = position_y,
             userIconPath = userIconPath,
             userNotes = "Click to edit notes"
         };
@@ -333,7 +341,9 @@ public class GameManager : MonoBehaviour
         }
         _selectedLocationTab = tab;
         tab.Root.AddToClassList("location-tab-selected");
-        _locations[(int)_selectedLocationTab.Model.LocationIndex].ShowLocationPanel();
+        LocationBundle locationBundle = _locations[(int)_selectedLocationTab.Model.LocationIndex];
+        locationBundle.LocationPanel.BringToFront();
+        locationBundle.ShowLocationPanel();
     }
 
     void OnDestroy()

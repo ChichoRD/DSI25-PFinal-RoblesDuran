@@ -15,6 +15,8 @@ public class LocationBundle
     private VisualElement _locationUserSelectionPanel;
     private readonly List<VisualElement> _locationUserIcons = new List<VisualElement>();
     public List<VisualElement> LocationUserIcons => _locationUserIcons;
+    public VisualElement LocationPanel => _locationPanel;
+    public VisualElement LocationUserSelectionPanel => _locationUserSelectionPanel;
     public LocationBundle(Location location, LocationInfo locationInfo)
     {
         _location = location;
@@ -37,6 +39,7 @@ public class LocationBundle
 
     private void OnLocationUserIconPointerDown(PointerDownEvent evt)
     {
+        LocationUserSelectionPanel.BringToFront();
         ShowLocationUserSelectionPanel();
     }
 
