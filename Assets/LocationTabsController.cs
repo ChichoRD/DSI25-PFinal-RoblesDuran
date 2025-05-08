@@ -16,6 +16,7 @@ public class LocationTabsController : MonoBehaviour
     }
 
     private readonly List<LocationTab> _locationTabs = new List<LocationTab>();
+    public List<LocationTab> LocationTabs => _locationTabs;
     private static string GetSaveDirectory() {
         return Path.Combine(Application.persistentDataPath, "location-tabs.json");
     }
@@ -54,6 +55,7 @@ public class LocationTabsController : MonoBehaviour
         VisualElement locationTabRoot = template.CloneTree();
         LocationTab locationTab = new LocationTab(new LocationTabModel(locationTabData), locationTabRoot);
         root.Add(locationTabRoot);
+        _locationTabs.Add(locationTab);
         return locationTab;
     }
 

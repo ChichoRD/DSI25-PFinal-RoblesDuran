@@ -16,7 +16,7 @@
                     </ui:VisualElement>
                     <ui:VisualElement name="VisualElement" style="flex-grow: 1; height: 80%; align-items: center; justify-content: space-around;">
                         <ui:VisualElement name="map-play-area" style="flex-grow: 1; align-items: center; justify-content: center; width: 90%;">
-                            <AnnouncementMenu focusable="true" title="Title" announcement="Description" name="announcement-menu" style="width: 512px; height: 256px;" />
+                            <AnnouncementMenu focusable="true" title="Title" announcement="Description" name="announcement-menu" style="width: 512px; height: 384px;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-grow: 1; justify-content: space-around; align-items: center; flex-direction: row;">

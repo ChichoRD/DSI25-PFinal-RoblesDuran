@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private Vector2 _locationIconOffset;
+    [SerializeField]
+    private Vector2 _playAreaMarginLeftTop;
+    [SerializeField]
+    private Vector2 _playAreaMarginRightBottom;
     private VisualTreeAsset _locationTemplate;
     private AnnouncementMenu _announcementMenu;
     private VisualElement _mapPlayArea; 
@@ -18,8 +23,17 @@ public class GameManager : MonoBehaviour
     private Button _passDayButton;
     private Button _travelButton;
     private uint _currentDay = 0;
+    public uint CurrentDay {
+        get => _currentDay;
+        private set
+        {
+            _currentDay = value;
+            _currentDayLabel.text = $"Day: {_currentDay}";
+        }
+    }
     private PipBar _liveBar;
     private Label _currentLocationLabel;
+    private Label _currentDayLabel;
     private uint _currentLocationIndex;
     public uint CurrentLocationIndex {
         get => _currentLocationIndex;
@@ -163,11 +177,11 @@ public class GameManager : MonoBehaviour
         _travelButton = root.Q<Button>("button-travel");
         _liveBar = root.Q<PipBar>("bar-live");
         _currentLocationLabel = root.Q<Label>("location-current-label");
+        _currentDayLabel = root.Q<Label>("current-day-label");
 
         _locationTemplate = Resources.Load<VisualTreeAsset>("template/location");
         _announcementMenu = root.Q<AnnouncementMenu>("announcement-menu");
 
-        
         _mapPlayArea.RegisterCallback<PointerDownEvent>(MapPlayAreaOnPointerDown);
         _passDayButton.clicked += OnPassDayButtonClicked;
         _travelButton.clicked += OnTravelButtonClicked;
@@ -177,11 +191,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("No saved game found, starting new game");
         }
 
-        uint remainingLocations = DayStart();
-        if (remainingLocations == 0) 
-        {
-            OnFinalDayStart();
-        }
+        DayStart();
     }
 
     private void OnTravelButtonClicked()
@@ -228,7 +238,7 @@ public class GameManager : MonoBehaviour
             {
                 AddLocation(locationData.locationData, locationData.locationInfoData);
             }
-            _currentDay = customLocations.currentDay;
+            CurrentDay = customLocations.currentDay;
             _liveBar.ActivePips = customLocations.livePips;
             _travelBar.ActivePips = customLocations.travelPips;
             CurrentLocationIndex = customLocations.currentLocationIndex;
@@ -243,13 +253,9 @@ public class GameManager : MonoBehaviour
         if (_locations.Count > 0) {
             PassDayInLocation(CurrentLocation);
         }
-        ++_currentDay;
+        ++CurrentDay;
 
-        uint remainingLocations = DayStart();
-        if (remainingLocations == 0) 
-        {
-            OnFinalDayStart();
-        }
+        DayStart();
     }
 
     private void PassDayInLocation(LocationBundle currentLocation)
@@ -290,6 +296,24 @@ public class GameManager : MonoBehaviour
             ++_travelBar.Pips;
             _liveBar.ActivePips = (uint)Mathf.Min((int)_liveBar.ActivePips + 1, (int)_liveBar.Pips);
             _travelBar.ActivePips = (uint)Mathf.Min((int)_travelBar.ActivePips + 1, (int)_travelBar.Pips);
+            Debug.Log($"searching for treasure in mountain {CurrentLocationIndex}");
+            int mountainIndex = _locationTabsController.LocationTabs.FindIndex(tab => {
+                Debug.Log($"tab index: {tab.Model.LocationIndex}");
+                return tab.Model.LocationIndex == CurrentLocationIndex;
+            });
+            Debug.Log($"Removing mountain tab {mountainIndex}");
+            _locationTabsController.LocationTabs[mountainIndex].Root.RemoveFromHierarchy();
+            _locationTabsController.LocationTabs.RemoveAt(mountainIndex);
+            _locations[(int)CurrentLocationIndex].Location.Root.RemoveFromHierarchy();
+            _locations.RemoveAt((int)CurrentLocationIndex);
+            // shuffle the remaining locations
+            for (int i = _locations.Count - 1; i < _locationsData.Length; i++)
+            {
+                int randomIndex = UnityEngine.Random.Range(i, _locations.Count);
+                (_locationsData[randomIndex], _locationsData[i]) =
+                    (_locationsData[i], _locationsData[randomIndex]);
+            }
+            --CurrentLocationIndex;
             break;
         default:
             Debug.Assert(false, "error: unknown location type");
@@ -302,7 +326,21 @@ public class GameManager : MonoBehaviour
         int remainingLocations = _locationsData.Length - _locations.Count;
         Debug.Assert(remainingLocations >= 0, "error: remaining locations should be non-negative");
 
-        var annnouncement = _dailyAnnouncements[_currentDay % _dailyAnnouncements.Length];
+        DailyAnnouncement annnouncement = default;
+        if (_liveBar.ActivePips == 0) {
+            annnouncement = new DailyAnnouncement("Game Over", "The bandits have pillaged your last remaining health and you are now dead.");
+            _announcementMenu.OkButton.clicked += RestartGame;
+        } else if (remainingLocations == 0) {
+            annnouncement = new DailyAnnouncement("All Locations Found. Congratulations!", "You have found all locations and treasures. You are a true explorer!");
+            _announcementMenu.OkButton.clicked += RestartGame;
+        } else if (CurrentDay >= 7 && CurrentDay < 14) {
+            annnouncement = new DailyAnnouncement("New Locations Available", $"You have {remainingLocations} locations left to find.");
+        } else if (CurrentDay >= 14) {
+            annnouncement = new DailyAnnouncement("Game Over", "You spent too long in your exploration mission and the Duque of Aurlesfritch already found the treasure of these lands.");
+            _announcementMenu.OkButton.clicked += RestartGame;
+        } else {
+            annnouncement = _dailyAnnouncements[CurrentDay % _dailyAnnouncements.Length];
+        }
         _announcementMenu.SetAnnouncement(
             annnouncement.title,
             annnouncement.description
@@ -313,9 +351,26 @@ public class GameManager : MonoBehaviour
         return (uint)remainingLocations;
     }
 
-    private void OnFinalDayStart()
+    private void RestartGame()
     {
-        throw new NotImplementedException();
+        _announcementMenu.OkButton.clicked -= RestartGame;
+        for (int i = _locations.Count - 1; i >= 0; i--)
+        {
+            _locations[i].Location.Root.RemoveFromHierarchy();
+        }
+        _locations.Clear();
+        for (int i = 0; i < _locationTabsController.LocationTabs.Count; i++)
+        {
+            _locationTabsController.LocationTabs[i].Root.RemoveFromHierarchy();
+        }
+        _locationTabsController.LocationTabs.Clear();
+        _travelBar.ActivePips = 3;
+        _liveBar.ActivePips = 3;
+        _travelBar.Pips = 3;
+        _liveBar.Pips = 3;
+        CurrentDay = 0;
+        CurrentLocationIndex = 0;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private LocationBundle AddLocation(LocationModel.LocationData locationData, LocationInfoModel.LocationInfoData locationInfoData)
@@ -392,10 +447,10 @@ public class GameManager : MonoBehaviour
         }
         float position_x = evt.localPosition.x - _locationIconOffset.x;
         float position_y = evt.localPosition.y - _locationIconOffset.y;
-        if (position_x < 0 || position_x > _mapPlayArea.resolvedStyle.width ||
-            position_y < 0 || position_y > _mapPlayArea.resolvedStyle.height)
+        if (position_x < -_playAreaMarginLeftTop.x || position_x > _mapPlayArea.resolvedStyle.width + _playAreaMarginRightBottom.x
+            || position_y < -_playAreaMarginLeftTop.y || position_y > _mapPlayArea.resolvedStyle.height + _playAreaMarginRightBottom.y )
         {
-            Debug.LogWarning("error: clicked position is outside of map play area");
+            Debug.LogWarning($"error: clicked position ({position_x}, {position_y}) is outside of map play area");
             return;
         }
 
@@ -441,7 +496,7 @@ public class GameManager : MonoBehaviour
     void OnDestroy()
     {
         SerializedCustomLocations customLocations = new SerializedCustomLocations{
-            currentDay = _currentDay,
+            currentDay = CurrentDay,
             travelPips = _travelBar.ActivePips,
             livePips = _liveBar.ActivePips,
             currentLocationIndex = _currentLocationIndex,
