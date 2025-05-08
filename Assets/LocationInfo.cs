@@ -12,6 +12,8 @@ public class LocationInfo
     
     private readonly Label _userNotesLabel;
     private readonly VisualElement _userIcon;
+    public Label UserNotesLabel => _userNotesLabel;
+    public VisualElement UserIcon => _userIcon;
 
 
     public LocationInfo(LocationInfoModel model, VisualElement root)

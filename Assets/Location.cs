@@ -13,6 +13,9 @@ public class Location
     private readonly Label _nameLabel;
     private readonly Label _descriptionLabel;
 
+    public VisualElement LocationIcon => _locationIcon;
+    public Label NameLabel => _nameLabel;
+    public Label DescriptionLabel => _descriptionLabel;
 
     public Location(LocationModel model, VisualElement root)
     {

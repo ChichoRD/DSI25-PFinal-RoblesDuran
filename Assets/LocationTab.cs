@@ -1,7 +1,7 @@
 using UnityEngine.UIElements;
 using UnityEngine;
 
-class LocationTab
+public class LocationTab
 {
     private readonly LocationTabModel _model;
     private readonly VisualElement _root;

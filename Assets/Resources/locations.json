@@ -1,0 +1,54 @@
+{
+    "locations": [
+        {
+            "name": "Mountain",
+            "description": "A tranquil place to set up a camp.",
+            "type": 4
+        },
+        {
+            "name": "Village of Shaepa",
+            "description": "Local economy is primarily based on agriculture.",
+            "type": 1
+        },
+        {
+            "name": "Village of Jud II",
+            "description": "Jud is loved by all villagers, young and old. He is a caring leader and welcomes travellers.",
+            "type": 1
+        },
+        {
+            "name": "Town of Poch",
+            "description": "The best craftment retire to this growing community to study materials of the nearby mountains.",
+            "type": 2
+        },
+        {
+            "name": "Town of The Protectors of His Majestry",
+            "description": "No bandit dares to pillage around the territory. Afterall this is a territory property of The Royal Guard.",
+            "type": 2
+        },
+        {
+            "name": "City of Aurlesfritch",
+            "description": "Trading and commerce are in the spirit of this historic city. Products from all the kingdom sell here. Though beware of possible troublemakers.",
+            "type": 3
+        },
+        {
+            "name": "City of Eigno the Great",
+            "description": "Home of the actual sovereign. Only people of the highest social status wander around.",
+            "type": 3
+        },
+        {
+            "name": "Bandits of the North Stars",
+            "description": "A group of bandits. Coming from some cult congregated north of here, it seems.",
+            "type": 6
+        },
+        {
+            "name": "Bandits of Crimson",
+            "description": "Extremely hostile and ruthless bandits. They might be planning on pillaging some nearby city.",
+            "type": 6
+        },
+        {
+            "name": "Chamber in the Peaks",
+            "description": "The legendary entrance to an eternal treasure reveals itself!",
+            "type": 5
+        }
+    ]
+}

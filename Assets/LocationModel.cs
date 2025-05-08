@@ -14,6 +14,7 @@ public class LocationModel
         BanditStash
     }
 
+    [Serializable]
     public struct LocationData
     {
         public string name;

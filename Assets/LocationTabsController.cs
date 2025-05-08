@@ -44,7 +44,7 @@ public class LocationTabsController : MonoBehaviour
         }
     }
 
-    private LocationTab AddLocationTab(LocationTabModel.LocationTabData locationTabData, VisualElement root) {
+    public LocationTab AddLocationTab(LocationTabModel.LocationTabData locationTabData, VisualElement root) {
         const string templatePath = "template/location-tab";
         var template = Resources.Load<VisualTreeAsset>(templatePath);
         if (template == null) {
